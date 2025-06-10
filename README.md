@@ -3,18 +3,18 @@
 这是一个基于 MovieLens 100K 数据集的推荐系统项目，包含模型训练、推理、API 服务以及可视化功能。
 
 ## 目录结构
-.
-├── api.py            # 启动推荐 API 服务
-├── train.py          # 模型训练脚本
-├── inference.py      # 模型推理脚本
-├── utils.py          # 工具函数（数据处理、评估等）
-├── visualize.py      # 可视化脚本
-├── data/             # 数据目录
-│   ├── u.data        # 用户评分数据
-│   ├── u.item        # 电影信息数据
-│   ├── u.user        # 用户信息数据
-│   └── u.genre       # 电影类型映射
-└── README.md         # 项目说明文件
+.  
+├── api.py            # 启动推荐 API 服务    
+├── train.py          # 模型训练脚本   
+├── inference.py      # 模型推理脚本   
+├── utils.py          # 工具函数（数据处理、评估等）   
+├── visualize.py      # 可视化脚本   
+├── data/             # 数据目录   
+│   ├── u.data        # 用户评分数据    
+│   ├── u.item        # 电影信息数据    
+│   ├── u.user        # 用户信息数据    
+│   └── u.genre       # 电影类型映射    
+└── README.md         # 项目说明文件   
 
 ## 环境依赖
 - Python >= 3.7
