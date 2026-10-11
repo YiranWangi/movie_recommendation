@@ -1,0 +1,105 @@
+{
+  "algorithm": "Spark explicit-feedback ALS",
+  "pyspark_version": "4.0.1",
+  "seed": 42,
+  "rating_rows": 100000,
+  "split_sizes": {
+    "train": 80175,
+    "validation": 9909,
+    "test": 9916
+  },
+  "split_policy": "seeded random rating split: 80/10/10",
+  "selection_metric": "validation RMSE on scorable rows",
+  "train_mean_rating": 3.5309510445899597,
+  "validation_grid": [
+    {
+      "parameters": {
+        "rank": 10,
+        "regParam": 0.01,
+        "maxIter": 10
+      },
+      "validation": {
+        "total_rows": 9909,
+        "scored_rows": 9886,
+        "unscored_rows": 23,
+        "coverage": 0.9976788777878696,
+        "als_rmse": 1.085243340959577,
+        "als_mae": 0.8210179516862857,
+        "global_mean_rmse_on_same_rows": 1.118781436246834,
+        "global_mean_rmse_on_all_rows": 1.1205332477949175
+      }
+    },
+    {
+      "parameters": {
+        "rank": 10,
+        "regParam": 0.1,
+        "maxIter": 10
+      },
+      "validation": {
+        "total_rows": 9909,
+        "scored_rows": 9886,
+        "unscored_rows": 23,
+        "coverage": 0.9976788777878696,
+        "als_rmse": 0.9218445847582148,
+        "als_mae": 0.7306012218128856,
+        "global_mean_rmse_on_same_rows": 1.118781436246834,
+        "global_mean_rmse_on_all_rows": 1.1205332477949175
+      }
+    },
+    {
+      "parameters": {
+        "rank": 20,
+        "regParam": 0.01,
+        "maxIter": 10
+      },
+      "validation": {
+        "total_rows": 9909,
+        "scored_rows": 9886,
+        "unscored_rows": 23,
+        "coverage": 0.9976788777878696,
+        "als_rmse": 1.1826933508791615,
+        "als_mae": 0.897396965895919,
+        "global_mean_rmse_on_same_rows": 1.118781436246834,
+        "global_mean_rmse_on_all_rows": 1.1205332477949175
+      }
+    },
+    {
+      "parameters": {
+        "rank": 20,
+        "regParam": 0.1,
+        "maxIter": 10
+      },
+      "validation": {
+        "total_rows": 9909,
+        "scored_rows": 9886,
+        "unscored_rows": 23,
+        "coverage": 0.9976788777878696,
+        "als_rmse": 0.9176328604055384,
+        "als_mae": 0.7278769618431952,
+        "global_mean_rmse_on_same_rows": 1.118781436246834,
+        "global_mean_rmse_on_all_rows": 1.1205332477949173
+      }
+    }
+  ],
+  "best_parameters": {
+    "rank": 20,
+    "regParam": 0.1,
+    "maxIter": 10
+  },
+  "test": {
+    "total_rows": 9916,
+    "scored_rows": 9895,
+    "unscored_rows": 21,
+    "coverage": 0.9978822105687777,
+    "als_rmse": 0.9164424941620476,
+    "als_mae": 0.7250279530453646,
+    "global_mean_rmse_on_same_rows": 1.1187728601306177,
+    "global_mean_rmse_on_all_rows": 1.121246084390782
+  },
+  "data_sha256": {
+    "u.data": "06416e597f82b7342361e41163890c81036900f418ad91315590814211dca490",
+    "u.item": "553841ebc7de3a0fd0d6b62a204ea30c1e651aacfb2814c7a6584ac52f2c5701",
+    "u.genre": "9757e0d3e6b298159a80dd48eaf938114690e911e39af97a76949ef1663610bb"
+  },
+  "elapsed_seconds": 15.622763011000643
+}

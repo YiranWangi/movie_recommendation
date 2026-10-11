@@ -1,39 +1,52 @@
-from flask import Flask, request, jsonify
-from pyspark.ml.recommendation import ALSModel
-from pyspark.sql.functions import explode
-from utils import get_spark_session, load_movies
+"""Local Flask service using the shared recommendation engine."""
 
-app = Flask(__name__)
-# 全局 SparkSession 和模型实例
-spark = get_spark_session("APIService")
-model = ALSModel.load("models/als_model")
-movies = load_movies(spark)
+import argparse
+from pathlib import Path
 
-@app.route("/recommend", methods=["GET"])
-def recommend():
-    user_id = int(request.args.get("user_id", 1))
-    top_n = int(request.args.get("top_n", 10))
+from recommender import MovieRecommender, UnknownUserError, validate_request
+from utils import DEFAULT_DATA, DEFAULT_MODEL
 
-    df_user = spark.createDataFrame([(user_id,)], ["userId"])
-    recs = model.recommendForUserSubset(df_user, top_n)
 
-    recs_expanded = (
-        recs
-        .selectExpr("explode(recommendations) as rec")
-        .selectExpr("rec.movieId as movieId", "rec.rating as rating")
-    )
-    recs_with_titles = (
-        recs_expanded
-        .join(movies, "movieId")
-        .orderBy("rating", ascending=False)
-    )
+def create_app(engine=None, model_path=DEFAULT_MODEL, data_dir=DEFAULT_DATA):
+    from flask import Flask, jsonify, request
+    app = Flask(__name__)
+    if engine is None:
+        engine = MovieRecommender(model_path, data_dir)
+    app.config["RECOMMENDER"] = engine
 
-    results = recs_with_titles.collect()
-    return jsonify([
-        {"movieId": r.movieId, "title": r.title, "rating": float(r.rating)}
-        for r in results
-    ])
+    @app.get("/health")
+    def health():
+        return jsonify({"status": "ready"})
+
+    @app.get("/recommend")
+    def recommend():
+        try:
+            user_id = int(request.args["user_id"])
+            top_n = int(request.args.get("top_n", 10))
+            validate_request(user_id, top_n)
+        except (KeyError, ValueError):
+            return jsonify({"error": "Provide a positive user_id and top_n between 1 and 100."}), 400
+        try:
+            return jsonify(engine.recommend(user_id, top_n))
+        except UnknownUserError as error:
+            return jsonify({"error": str(error)}), 404
+
+    return app
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--model_path", type=Path, default=DEFAULT_MODEL)
+    parser.add_argument("--data_dir", type=Path, default=DEFAULT_DATA)
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=5000)
+    args = parser.parse_args()
+    engine = MovieRecommender(args.model_path, args.data_dir)
+    try:
+        create_app(engine=engine).run(host=args.host, port=args.port, debug=False, use_reloader=False)
+    finally:
+        engine.close()
+
 
 if __name__ == "__main__":
-    # 启动 Flask 服务
-    app.run(host="0.0.0.0", port=5000)
+    main()
